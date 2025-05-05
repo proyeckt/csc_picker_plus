@@ -1,7 +1,6 @@
 library csc_picker_plus;
 
 import 'dart:developer';
-import 'dart:math';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
