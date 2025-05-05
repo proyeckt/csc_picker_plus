@@ -623,8 +623,8 @@ class CSCPickerPlus extends StatefulWidget {
   final String cityDropdownLabel;
 
   final List<CscCountry>? countryFilter;
-  final List<CscCountry>? stateFilter;
-  final List<CscCountry>? cityFilter;
+  final List<String>? stateFilter;
+  final List<String>? cityFilter;
 
   final bool disableStateLabelSuffix;
 
@@ -639,7 +639,7 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
   // final List<String?> _states = [];
   final List<Region?> _statesModels = [];
   List<CscCountry> _countryFilter = [];
-  List<Region> _stateFilter = [];
+  List<String> _stateFilter = [];
   List<String> _cityFilter = [];
 
   String _selectedCity = 'City';
@@ -789,19 +789,18 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
   Future<List<Region?>> getStates() async {
     _statesModels.clear();
     var country = await getSelectedCountryData();
-    var takeState = country
-        .map((e) => widget.disableStateLabelSuffix
-            ? _removeStateLabelSuffix(e.state)
-            : e.state)
-        .toList();
+    var takeState = country.map((e) => e.state).toList();
     var states = takeState as List;
 
     // Filter states based on list of states passed in the stateFilter parameter
     states = states.where((state) {
-      final stateName = state.name?.trim().toLowerCase();
+      final updatedState = widget.disableStateLabelSuffix
+          ? _removeStateLabelSuffix(state)
+          : state;
+      final stateName = updatedState.name?.trim().toLowerCase();
       return stateName != null &&
           _stateFilter.any(
-            (filter) => filter.name!.trim().toLowerCase() == stateName,
+            (filter) => filter.trim().toLowerCase() == stateName,
           );
     }).toList();
 
