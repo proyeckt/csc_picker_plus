@@ -1,6 +1,7 @@
 library csc_picker_plus;
 
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
@@ -829,6 +830,8 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
     var country = await getSelectedCountryData();
     var selectedStates = country.map((e) => e.state).toList();
 
+    Set<String> cityFilterSet = Set.from(_cityFilter);
+
     for (var selectedState in selectedStates) {
       var state = selectedState?.where((item) {
         var stateName =
@@ -836,23 +839,32 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
                 ? item.name
                 : item.nameAr;
         return stateName == _selectedState;
-      });
-      // log('States Names: ${state?.first.toJson()}');
+      }).toList();
+
       var stateCities = state?.map((item) => item.city).toList();
-      stateCities?.forEach((ci) {
-        if (!mounted) return;
-        setState(() {
-          var citiesName = ci?.map((item) => item.name).toList();
-          for (var cityName in citiesName ?? []) {
-            //print(cityName.toString());
-            if (_cityFilter.contains(cityName.trim())) {
-              _cities.add(cityName.trim());
-            }
+      for (var ci in stateCities ?? []) {
+        var citiesName = ci?.map((item) => item.name).toList();
+        for (var cityName in citiesName ?? []) {
+          print(cityName.toString());
+          print(cityFilterSet.first);
+          // Check if the city is in the filter list
+          if (cityFilterSet.contains(cityName.trim())) {
+            cityFilterSet.add(cityName.trim());
           }
-        });
+        }
+      }
+    }
+
+    // Sort the cities alphabetically
+    updatedCities.sort((a, b) => a.compareTo(b));
+
+    // Only call setState once to avoid multiple rebuilds
+    if (mounted) {
+      setState(() {
+        _cities.addAll(updatedCities);
       });
     }
-    _cities.sort((a, b) => a!.compareTo(b!));
+
     return _cities;
   }
 
