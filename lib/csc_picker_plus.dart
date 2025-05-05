@@ -831,6 +831,7 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
     var selectedStates = country.map((e) => e.state).toList();
 
     Set<String> cityFilterSet = Set.from(_cityFilter);
+    List<String> updatedCities = [];
 
     for (var selectedState in selectedStates) {
       var state = selectedState?.where((item) {
@@ -849,7 +850,7 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
           print(cityFilterSet.first);
           // Check if the city is in the filter list
           if (cityFilterSet.contains(cityName.trim())) {
-            cityFilterSet.add(cityName.trim());
+            updatedCities.add(cityName.trim());
           }
         }
       }
