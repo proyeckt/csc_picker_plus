@@ -806,10 +806,9 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
 
     // log("Selected States:  ${states}");
 
-    for (var f in states) {
-      if (!mounted) continue;
+    if (mounted) {
       setState(() {
-        _statesModels.addAll(f);
+        _statesModels.addAll(states);
       });
     }
 
