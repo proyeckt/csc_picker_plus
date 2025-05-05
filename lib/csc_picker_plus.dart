@@ -846,12 +846,12 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
       for (var ci in stateCities ?? []) {
         var citiesName = ci?.map((item) => item.name).toList();
         for (var cityName in citiesName ?? []) {
-          log('cityName:${cityName.toString()}');
-          log('cityFilter:${cityFilterSet.first}');
+          print('cityName:${cityName.toString()}');
+          print('cityFilter:${cityFilterSet.first}');
           // Check if the city is in the filter list
-          if (cityFilterSet.contains(cityName.trim().toLowerCase())) {
-            updatedCities.add(cityName.trim());
-          }
+          // if (cityFilterSet.contains(cityName.trim().toLowerCase())) {
+          updatedCities.add(cityName.trim());
+          // }
         }
       }
     }
