@@ -835,10 +835,13 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
 
     for (var selectedState in selectedStates) {
       var state = selectedState?.where((item) {
+        final updatedState = widget.disableStateLabelSuffix
+            ? _removeStateLabelSuffix(item)
+            : item;
         var stateName =
             widget.countryStateLanguage == CountryStateLanguage.englishOrNative
-                ? item.name
-                : item.nameAr;
+                ? updatedState.name
+                : updatedState.nameAr;
         return stateName == _selectedState;
       }).toList();
 
@@ -846,12 +849,12 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
       for (var ci in stateCities ?? []) {
         var citiesName = ci?.map((item) => item.name).toList();
         for (var cityName in citiesName ?? []) {
-          print('cityName:${cityName.toString()}');
-          print('cityFilter:${cityFilterSet.first}');
+          log('cityName:${cityName.toString()}');
+          log('cityFilter:${cityFilterSet.first}');
           // Check if the city is in the filter list
-          // if (cityFilterSet.contains(cityName.trim().toLowerCase())) {
-          updatedCities.add(cityName.trim());
-          // }
+          if (cityFilterSet.contains(cityName.trim().toLowerCase())) {
+            updatedCities.add(cityName.trim());
+          }
         }
       }
     }
