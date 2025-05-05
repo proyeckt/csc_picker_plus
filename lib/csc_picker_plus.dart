@@ -585,6 +585,9 @@ class CSCPickerPlus extends StatefulWidget {
     this.stateDropdownLabel = "State",
     this.cityDropdownLabel = "City",
     this.countryFilter,
+    this.stateFilter,
+    this.cityFilter,
+    this.disableStateLabelSuffix = true,
   });
 
   final ValueChanged<String>? onCountryChanged;
@@ -620,6 +623,10 @@ class CSCPickerPlus extends StatefulWidget {
   final String cityDropdownLabel;
 
   final List<CscCountry>? countryFilter;
+  final List<CscCountry>? stateFilter;
+  final List<CscCountry>? cityFilter;
+
+  final bool disableStateLabelSuffix;
 
   @override
   CSCPickerPlusState createState() => CSCPickerPlusState();
@@ -632,6 +639,8 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
   // final List<String?> _states = [];
   final List<Region?> _statesModels = [];
   List<CscCountry> _countryFilter = [];
+  List<Region> _stateFilter = [];
+  List<String> _cityFilter = [];
 
   String _selectedCity = 'City';
   String? _selectedCountry;
@@ -644,6 +653,12 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
     setDefaults();
     if (widget.countryFilter != null) {
       _countryFilter = widget.countryFilter!;
+    }
+    if (widget.stateFilter != null) {
+      _stateFilter = widget.stateFilter!;
+    }
+    if (widget.cityFilter != null) {
+      _cityFilter = widget.cityFilter!;
     }
     getCountries();
     _selectedCity = widget.cityDropdownLabel.tr(widget.countryStateLanguage);
@@ -755,12 +770,41 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
     return country.cast<Country>();
   }
 
+  // Remove state label suffix from state name
+  Region _removeStateLabelSuffix(Region region) {
+    if (region.nameAr != null) {
+      region.nameAr = region.nameAr!
+          .replaceAll(RegExp(r'\s*-?\s*محافظة$', caseSensitive: false), '')
+          .trim();
+    }
+    if (region.name != null) {
+      region.name = region.name!
+          .replaceAll(RegExp(r'\s*Department$', caseSensitive: false), '')
+          .trim();
+    }
+    return region;
+  }
+
   ///get states from json response
   Future<List<Region?>> getStates() async {
     _statesModels.clear();
     var country = await getSelectedCountryData();
-    var takeState = country.map((e) => e.state).toList();
+    var takeState = country
+        .map((e) => widget.disableStateLabelSuffix
+            ? _removeStateLabelSuffix(e.state)
+            : e.state)
+        .toList();
     var states = takeState as List;
+
+    // Filter states based on list of states passed in the stateFilter parameter
+    states = states.where((state) {
+      final stateName = state.name?.trim().toLowerCase();
+      return stateName != null &&
+          _stateFilter.any(
+            (filter) => filter.name!.trim().toLowerCase() == stateName,
+          );
+    }).toList();
+
     // log("Selected States:  ${states}");
 
     for (var f in states) {
@@ -800,7 +844,9 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
           var citiesName = ci?.map((item) => item.name).toList();
           for (var cityName in citiesName ?? []) {
             //print(cityName.toString());
-            _cities.add(cityName.toString());
+            if (_cityFilter.contains(cityName.trim())) {
+              _cities.add(cityName.trim());
+            }
           }
         });
       });
