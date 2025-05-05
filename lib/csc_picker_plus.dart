@@ -790,7 +790,9 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
     _statesModels.clear();
     var country = await getSelectedCountryData();
     var takeState = country.map((e) => e.state).toList();
-    List<Region> states = takeState.cast<Region>();
+
+    // Flatten the List<List<Region>> to List<Region>
+    List<Region> states = takeState.expand((e) => e).toList();
 
     // Filter states based on list of states passed in the stateFilter parameter
     states = states.where((state) {
