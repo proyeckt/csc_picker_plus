@@ -338,7 +338,8 @@ class CustomDialog extends StatelessWidget {
   final BoxConstraints constraints;
 
   Color _getColor(BuildContext context) {
-    return Theme.of(context).dialogBackgroundColor;
+    return Theme.of(context).dialogTheme.backgroundColor ??
+        Theme.of(context).colorScheme.surface;
   }
 
   static const RoundedRectangleBorder _defaultDialogShape =
