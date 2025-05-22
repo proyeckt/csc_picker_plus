@@ -689,7 +689,7 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
 
     final Map<int, Country> countryModelMap = {
       for (var country in _countryModels)
-        if (country != null) country.id: country,
+        if (country != null && country.id != null) country.id!: country,
     };
 
     final countryModel = countryModelMap[countryId];
