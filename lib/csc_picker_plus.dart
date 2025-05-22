@@ -684,21 +684,20 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
   void _setDefaultCountry() {
     if (widget.defaultCountry == null) return;
 
-    // Map enum index (0-based) to JSON country ID (1-based)
-    final countryId = widget.defaultCountry!.index + 1;
-
     final Map<int, Country> countryModelMap = {
       for (var country in _countryModels)
         if (country != null && country.id != null) country.id!: country,
     };
 
+    // Map enum index (0-based) to JSON country ID (1-based)
+    final countryId = widget.defaultCountry!.index + 1;
     final countryModel = countryModelMap[countryId];
 
     if (countryModel != null) {
       log(countryModel.name ?? '');
       _onSelectedCountry(countryModel.name!);
     } else {
-      log('Default country not found in filtered list');
+      log('Default country with id=$countryId not found in country list');
     }
   }
 
@@ -736,6 +735,7 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
   ///Add a country to country list
   void addCountryToList(data) {
     var model = Country();
+    model.id = data['id'];
     model.name = data['name'];
     model.nameAr = data['name_ar'];
     model.emoji = data['emoji'];
@@ -862,8 +862,6 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
       for (var ci in stateCities ?? []) {
         var citiesName = ci?.map((item) => item.name).toList();
         for (var cityName in citiesName ?? []) {
-          log('cityName:${cityName.toString()}');
-          log('cityFilter:${cityFilterSet.first}');
           // Check if the city is in the filter list
           if (cityFilterSet.contains(cityName.trim().toLowerCase())) {
             updatedCities.add(cityName.trim());
