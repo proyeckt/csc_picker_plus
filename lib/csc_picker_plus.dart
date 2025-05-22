@@ -682,10 +682,23 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
   }
 
   void _setDefaultCountry() {
-    if (widget.defaultCountry != null) {
-      log(_countryModels[Countries[widget.defaultCountry]!]?.name ?? '');
-      _onSelectedCountry(
-          _countryModels[Countries[widget.defaultCountry]!]!.name!);
+    if (widget.defaultCountry == null) return;
+
+    // Map enum index (0-based) to JSON country ID (1-based)
+    final countryId = widget.defaultCountry!.index + 1;
+
+    final Map<int, Country> countryModelMap = {
+      for (var country in _countryModels)
+        if (country != null) country.id: country,
+    };
+
+    final countryModel = countryModelMap[countryId];
+
+    if (countryModel != null) {
+      log(countryModel.name ?? '');
+      _onSelectedCountry(countryModel.name!);
+    } else {
+      log('Default country not found in filtered list');
     }
   }
 
